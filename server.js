@@ -38,7 +38,10 @@ app.use((req, res, next) => {
 
 app.set('view engine','ejs');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;  // Your app listens on port 3000
+app.listen(PORT, () => {
+    console.log("server is running on port " + PORT);
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/css', express.static('public/css'));
@@ -46,6 +49,3 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static('public/uploads'));
 app.use('/product',productRoutes);
 app.use('/',indexRoutes)
-app.listen(PORT,()=>{
-    console.log("server is running on port "+PORT);
-});
