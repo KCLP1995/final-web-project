@@ -1,11 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const indexController = require('../controllers/indexController');
+const connection = require('../server');  // Ensure this points to your MySQL connection
 
-// Middleware for overriding methods
-const methodOverride = require('method-override');
-router.use(methodOverride('_method'));
-
-router.get('/',indexController.getListProduct);
+// Route to show all products
+router.get('/', (req, res) => {
+  const query = 'SELECT * FROM products';
+  connection.query(query, (err, results) => {
+    if (err) {
+      req.flash('error', 'Error retrieving products');
+      return res.redirect('/');
+    }
+    res.render('index/index', { 
+      title: 'Products', 
+      products: results, 
+      messages: req.flash() 
+    });
+  });
+});
 
 module.exports = router;

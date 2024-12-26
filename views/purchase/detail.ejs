@@ -1,0 +1,27 @@
+<!-- views/purchase/detail.ejs -->
+<%- include('partials/header') %>
+
+<h2 class="text-center mb-4">Purchase Details</h2>
+<div class="container">
+  <table class="table">
+    <tr>
+      <th>Product Name</th>
+      <td><%= purchase.productName %></td>
+    </tr>
+    <tr>
+      <th>Quantity</th>
+      <td><%= purchase.quantity %></td>
+    </tr>
+    <tr>
+      <th>Total Price</th>
+      <td><%= purchase.totalPrice %></td>
+    </tr>
+    <tr>
+      <th>Status</th>
+      <td><%= purchase.status %></td>
+    </tr>
+  </table>
+  <a href="/purchases" class="btn btn-primary">Back to Purchases</a>
+</div>
+
+<%- include('partials/footer') %>

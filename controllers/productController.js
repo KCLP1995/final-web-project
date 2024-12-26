@@ -1,95 +1,82 @@
-const Product = require("../models/productModel");
-const upload = require('../config/multer');
+const Product = require('../models/productModel'); // Assuming you're using a model for DB operations
 
-exports.getAllProducts = async (req,res) => {
-    try{
-        const products = await Product.getAll();
-        title = "List product"
-        res.render('product/index',{products,title});
-        
-    }catch(err){
-        res.status(500).send("Error fetching products");
-    }
+// Get all products
+exports.getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.getAll();
+    res.render('product/list', { products, title: 'All Products' });
+  } catch (error) {
+    res.status(500).send('Error fetching products');
+  }
 };
 
-exports.renderCreateForm = (req,res)=>{
-    title = "New Product"
-    res.render('product/create',{title});
+// Render the form to create a new product
+exports.renderCreateForm = (req, res) => {
+  res.render('product/create', { title: 'Create New Product' });
 };
 
-exports.createProduct = async(req,res)=>{
-    try{
-        const { name, description, price } = req.body;
-        let image_path = "";
-        // If there's an uploaded file, set the image path
-        if (req.file) {
-            image_path = `/uploads/${req.file.filename}`;
-        }
-        await Product.create({ name, description, price, image: image_path });
-        res.redirect("/product");
-    }catch(err){
-        let backurl = '/product';
-        req.flash('error', err.sqlMessage);
-        return res.redirect(backurl);
-    }
-}
+// Create a new product
+exports.createProduct = async (req, res) => {
+  const { name, price, description } = req.body;
+  const image = req.file ? req.file.filename : null;
 
-exports.getProductById = async (req,res) => {
-    try {
-        const product = await Product.getById(req.params.id);
-        title = "Show product";
-        if (product) {
-          res.render('product/show', { product,title });
-        } else {
-          res.status(404).send('Product not found');
-        }
-      } catch (err) {
-        res.status(500).send('Error fetching product');
-      }
+  try {
+    await Product.create({ name, price, description, image });
+    req.flash('success', 'Product created successfully!');
+    res.redirect('/products');
+  } catch (error) {
+    req.flash('error', 'Error creating product');
+    res.redirect('/products/create');
+  }
 };
 
+// Get a product by ID
+exports.getProductById = async (req, res) => {
+  const productId = req.params.id;
+  try {
+    const product = await Product.getById(productId);
+    res.render('product/details', { product, title: 'Product Details' });
+  } catch (error) {
+    res.status(500).send('Error fetching product details');
+  }
+};
+
+// Render the edit form
 exports.renderEditForm = async (req, res) => {
-    try {
-      const product = await Product.getById(req.params.id);
-      title = "Edit Product";
-      if (product) {
-        res.render('product/edit', { product,title });
-      } else {
-        res.status(404).send('Product not found');
-      }
-    } catch (err) {
-      res.status(500).send('Error fetching product');
-    }
+  const productId = req.params.id;
+  try {
+    const product = await Product.getById(productId);
+    res.render('product/edit', { product, title: 'Edit Product' });
+  } catch (error) {
+    res.status(500).send('Error fetching product for edit');
+  }
 };
 
-// Update product
+// Update a product
 exports.updateProduct = async (req, res) => {
-    try {
-        const { name, description, price } = req.body;
-        let image_path = "";
+  const productId = req.params.id;
+  const { name, price, description } = req.body;
+  const image = req.file ? req.file.filename : null;
 
-        if (req.file) {
-            image_path = `/uploads/${req.file.filename}`;
-        }
-        else{
-            const product = await Product.getById(req.params.id);
-            image_path = product.image;
-            
-        }
-        await Product.update(req.params.id, { name, description, price, image: image_path });
-        
-        res.redirect('/product');
-    } catch (err) {
-      res.status(500).send('Error updating product');
-    }
-  };
-  
-  // Delete product
-  exports.deleteProduct = async (req, res) => {
-    try {
-      await Product.delete(req.params.id);
-      res.redirect('/product');
-    } catch (err) {
-      res.status(500).send('Error deleting product');
-    }
-  };
+  try {
+    await Product.update(productId, { name, price, description, image });
+    req.flash('success', 'Product updated successfully!');
+    res.redirect(`/products/${productId}`);
+  } catch (error) {
+    req.flash('error', 'Error updating product');
+    res.redirect(`/products/${productId}/edit`);
+  }
+};
+
+// Delete a product
+exports.deleteProduct = async (req, res) => {
+  const productId = req.params.id;
+  try {
+    await Product.delete(productId);
+    req.flash('success', 'Product deleted successfully!');
+    res.redirect('/products');
+  } catch (error) {
+    req.flash('error', 'Error deleting product');
+    res.redirect('/products');
+  }
+};

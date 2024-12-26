@@ -1,16 +1,22 @@
 <%- include('../partials/header') %>
+
+<!-- Product Grid -->
+<div class="container my-5">
+  <h2 class="text-center mb-4">Our Products</h2>
   <div class="row">
     <% products.forEach(product => { %>
-      <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
-        <div class="card" style="width: 18rem;">
-            <img src="<%=product.image %>" class="card-img-top" alt="...">
-            <div class="card-body">
-              <h5 class="card-title"><%= product.name %></h5>
-              <p class="card-text"><%= product.description %></p>
-              <a href="/product/<%= product.id %>" class="btn btn-primary">Detail</a>
-            </div>
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card shadow-sm" style="width: 100%; border-radius: 10px;">
+          <img src="/uploads/<%= product.image %>" class="card-img-top" alt="<%= product.name %>" style="border-radius: 10px 10px 0 0; height: 200px; object-fit: cover;">
+          <div class="card-body">
+            <h5 class="card-title"><%= product.name %></h5>
+            <p class="card-text" style="color: #6c757d;"><%= product.description %></p>
+            <a href="/product/<%= product.id %>" class="btn btn-primary btn-block">View Details</a>
+          </div>
         </div>
       </div>
-        <% }); %>
+    <% }); %>
   </div>
+</div>
+
 <%- include('../partials/footer') %>
