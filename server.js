@@ -13,6 +13,7 @@ const connection = mysql.createConnection({
   user: process.env.DB_USER,        // From .env file
   password: process.env.DB_PASSWORD, // From .env file
   database: process.env.DB_NAME,     // From .env file
+  connectTimeout: 10000 // Optional: Adjust timeout
 });
 
 // Connect to MySQL
