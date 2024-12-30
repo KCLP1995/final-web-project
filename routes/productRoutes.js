@@ -1,31 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-const upload = require('../config/multer'); // For handling image uploads
+const upload = require('../config/multer');
 
-// Middleware for overriding methods (PATCH/PUT/DELETE using forms)
+// Middleware for overriding methods
 const methodOverride = require('method-override');
-router.use(methodOverride('_method')); // This allows us to use PUT and DELETE via forms
+router.use(methodOverride('_method'));
 
-// Route to get all products (List page)
+// List all products
 router.get('/', productController.getAllProducts);
 
-// Route to display the form for creating a new product
+// Show create product form
 router.get('/create', productController.renderCreateForm);
 
-// Route to handle creating a new product
+// Create a new product (POST)
 router.post('/', upload.single('image'), productController.createProduct);
 
-// Route to get a product by its ID (Product Details page)
+// Show product details
 router.get('/:id', productController.getProductById);
 
-// Route to show the form to edit an existing product
+// Show edit product form
 router.get('/:id/edit', productController.renderEditForm);
 
-// Route to handle updating a product
+// Update product (PUT)
 router.put('/:id', upload.single('image'), productController.updateProduct);
 
-// Route to handle deleting a product
+// Delete product (DELETE)
 router.delete('/:id', productController.deleteProduct);
 
 module.exports = router;

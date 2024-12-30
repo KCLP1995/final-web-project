@@ -1,54 +1,23 @@
-<%- include('../partials/header') %> <!-- Include the header from partials -->
+<%- include('../partials/header') %>
 
-<div class="container">
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Register</h4>
-                </div>
-                <div class="card-body">
-                    <form action="/register" method="POST">
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm Password</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">Register</button>
-                    </form>
-                    <% if (messages.error) { %>
-                        <p class="text-danger mt-2"><%= messages.error %></p>
-                    <% } %>
-                    <% if (messages.success) { %>
-                        <p class="text-success mt-2"><%= messages.success %></p>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<form action="/register" method="POST">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
 
-<%- include('../partials/footer') %> <!-- Include the footer from partials -->
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
 
-<script>
-    document.querySelector('form').addEventListener('submit', function (event) {
-        const password = document.querySelector('#password').value;
-        const confirmPassword = document.querySelector('#confirmPassword').value;
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
 
-        if (password !== confirmPassword) {
-            alert('Passwords do not match');
-            event.preventDefault(); // Prevent form submission
-        }
-    });
-</script>
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+    <button type="submit">Register</button>
+</form>
+
+<% if (messages.error) { %>
+    <p class="text-danger"><%= messages.error %></p>
+<% } %>
+
+<%- include('../partials/footer') %>

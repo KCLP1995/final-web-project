@@ -1,82 +1,95 @@
-const Product = require('../models/productModel'); // Assuming you're using a model for DB operations
+const Product = require("../models/productModel");
+const upload = require('../config/multer');
 
-// Get all products
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.getAll();
-    res.render('product/list', { products, title: 'All Products' });
-  } catch (error) {
-    res.status(500).send('Error fetching products');
+    const title = "List Product";
+    console.log(products);
+    res.render('product/index', { products, title });
+  } catch (err) {
+    res.status(500).send("Error fetching products");
   }
 };
 
-// Render the form to create a new product
 exports.renderCreateForm = (req, res) => {
-  res.render('product/create', { title: 'Create New Product' });
+  const title = "New Product";
+  res.render('product/create', { title });
 };
 
-// Create a new product
 exports.createProduct = async (req, res) => {
-  const { name, price, description } = req.body;
-  const image = req.file ? req.file.filename : null;
-
   try {
-    await Product.create({ name, price, description, image });
-    req.flash('success', 'Product created successfully!');
-    res.redirect('/products');
-  } catch (error) {
-    req.flash('error', 'Error creating product');
-    res.redirect('/products/create');
+    const { name, description, price } = req.body;
+    let image_path = "";
+    
+    // If there's an uploaded file, set the image path
+    if (req.file) {
+      image_path = `/uploads/${req.file.filename}`;
+    }
+
+    await Product.create({ name, description, price, image: image_path });
+    res.redirect("/product");
+  } catch (err) {
+    const backurl = '/product';
+    req.flash('error', err.sqlMessage || 'Error creating product');
+    return res.redirect(backurl);
   }
 };
 
-// Get a product by ID
 exports.getProductById = async (req, res) => {
-  const productId = req.params.id;
   try {
-    const product = await Product.getById(productId);
-    res.render('product/details', { product, title: 'Product Details' });
-  } catch (error) {
-    res.status(500).send('Error fetching product details');
+    const product = await Product.getById(req.params.id);
+    const title = "Show Product";
+    if (product) {
+      res.render('product/show', { product, title });
+    } else {
+      res.status(404).send('Product not found');
+    }
+  } catch (err) {
+    res.status(500).send('Error fetching product');
   }
 };
 
-// Render the edit form
 exports.renderEditForm = async (req, res) => {
-  const productId = req.params.id;
   try {
-    const product = await Product.getById(productId);
-    res.render('product/edit', { product, title: 'Edit Product' });
-  } catch (error) {
-    res.status(500).send('Error fetching product for edit');
+    const product = await Product.getById(req.params.id);
+    const title = "Edit Product";
+    if (product) {
+      res.render('product/edit', { product, title });
+    } else {
+      res.status(404).send('Product not found');
+    }
+  } catch (err) {
+    res.status(500).send('Error fetching product');
   }
 };
 
-// Update a product
 exports.updateProduct = async (req, res) => {
-  const productId = req.params.id;
-  const { name, price, description } = req.body;
-  const image = req.file ? req.file.filename : null;
-
   try {
-    await Product.update(productId, { name, price, description, image });
-    req.flash('success', 'Product updated successfully!');
-    res.redirect(`/products/${productId}`);
-  } catch (error) {
-    req.flash('error', 'Error updating product');
-    res.redirect(`/products/${productId}/edit`);
+    const { name, description, price } = req.body;
+    let image_path = "";
+
+    // If a new file is uploaded, use that as the image
+    if (req.file) {
+      image_path = `/uploads/${req.file.filename}`;
+    } else {
+      // If no file is uploaded, retain the old image
+      const product = await Product.getById(req.params.id);
+      image_path = product.image || ''; // If there's no image, keep it empty or use a default
+    }
+
+    await Product.update(req.params.id, { name, description, price, image: image_path });
+    res.redirect('/product');
+  } catch (err) {
+    res.status(500).send('Error updating product');
   }
 };
 
-// Delete a product
 exports.deleteProduct = async (req, res) => {
-  const productId = req.params.id;
   try {
-    await Product.delete(productId);
-    req.flash('success', 'Product deleted successfully!');
-    res.redirect('/products');
-  } catch (error) {
-    req.flash('error', 'Error deleting product');
-    res.redirect('/products');
+    await Product.delete(req.params.id);
+    res.redirect('/product');
+  } catch (err) {
+    res.status(500).send('Error deleting product');
   }
 };

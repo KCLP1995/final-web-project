@@ -1,34 +1,17 @@
-<%- include('../partials/header') %> <!-- Include the header from partials -->
+<%- include('../partials/header') %>
 
-<div class="container">
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Login</h4>
-                </div>
-                <div class="card-body">
-                    <form action="/login" method="POST">
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">Login</button>
-                    </form>
-                    <% if (messages.error) { %>
-                        <p class="text-danger mt-2"><%= messages.error %></p>
-                    <% } %>
-                    <% if (messages.success) { %>
-                        <p class="text-success mt-2"><%= messages.success %></p>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<form action="/login" method="POST">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
 
-<%- include('../partials/footer') %> <!-- Include the footer from partials -->
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Login</button>
+</form>
+
+<% if (messages.error) { %>
+    <p class="text-danger"><%= messages.error %></p>
+<% } %>
+
+<%- include('../partials/footer') %>

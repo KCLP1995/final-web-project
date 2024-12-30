@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const User = require('../models/User');
+const User = require('../models/userModel');
 const router = express.Router();
 
 // Middleware to check if user is logged in
@@ -38,13 +38,11 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
-        const user = new User({
+        const userId = await User.create({
             username,
             email,
             password: hashedPassword,  // Store hashed password
         });
-
-        await user.save();
 
         req.flash('success', 'User registered successfully');
         res.redirect('/login');

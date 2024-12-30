@@ -1,5 +1,5 @@
 // controllers/purchaseController.js
-const Purchase = require('../models/purchase');
+const Purchase = require('../models/purchaseModel');
 
 const purchaseController = {
   // Fetch all purchases made by the user

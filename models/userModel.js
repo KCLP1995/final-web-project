@@ -1,19 +1,28 @@
-const mongoose = require('mongoose');
+const db = require("../config/database");
 
-const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
+class User {
+    // Find a user by email
+    static async findOne({ email }) {
+        try {
+            const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+            return rows.length ? rows[0] : null;
+        } catch (err) {
+            throw err;
+        }
     }
-});
 
-module.exports = mongoose.model('User', userSchema);
+    // Create a new user
+    static async create({ username, email, password }) {
+        try {
+            const [result] = await db.execute(
+                'INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
+                [username, email, password]
+            );
+            return result.insertId; // Return the ID of the new user
+        } catch (err) {
+            throw err;
+        }
+    }
+}
+
+module.exports = User;
