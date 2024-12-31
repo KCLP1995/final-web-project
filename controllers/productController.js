@@ -5,7 +5,6 @@ exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.getAll();
     const title = "List Product";
-    console.log(products);
     res.render('product/index', { products, title });
   } catch (err) {
     res.status(500).send("Error fetching products");

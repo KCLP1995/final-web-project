@@ -1,106 +1,118 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const User = require('../models/userModel');
+const User = require('../models/userModel'); // Import the user model
+const { checkAuthenticated, checkNotAuthenticated } = require('../middleware/auth');
+const { body, validationResult } = require('express-validator');
+
 const router = express.Router();
 
-// Middleware to check if user is logged in
-function isAuthenticated(req, res, next) {
-    if (req.session.user) {
-        return next();  // User is logged in, proceed to the next route
-    }
-    req.flash('error', 'You must be logged in to access this page');
-    res.redirect('/login');  // If not logged in, redirect to login
-}
-
-// Register route
-router.get('/register', (req, res) => {
-    res.render('user/register');
+// Render login page
+router.get('/login', checkNotAuthenticated, (req, res) => {
+    res.render('user/login', { title: 'Login' });
 });
 
-router.post('/register', async (req, res) => {
+// Handle login form submission
+router.post('/login', checkNotAuthenticated, async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        req.flash('error', 'Email and password are required');
+        return res.redirect('/user/login');
+    }
+
     try {
-        const { username, email, password, confirmPassword } = req.body;
-
-        // Check if passwords match
-        if (password !== confirmPassword) {
-            req.flash('error', 'Passwords do not match');
-            return res.redirect('/register');
+        const user = await User.findByEmail(email); // Find user by email
+        if (user && await bcrypt.compare(password, user.password)) {
+            req.session.user = { id: user.id, username: user.username, email: user.email }; // Store user in session
+            res.redirect('/user/profile'); // Redirect to profile after login
+        } else {
+            req.flash('error', 'Invalid email or password');
+            res.redirect('/user/login');
         }
-
-        // Check if the user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            req.flash('error', 'Email already in use');
-            return res.redirect('/register');
-        }
-
-        // Hash the password before saving
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create new user
-        const userId = await User.create({
-            username,
-            email,
-            password: hashedPassword,  // Store hashed password
-        });
-
-        req.flash('success', 'User registered successfully');
-        res.redirect('/login');
-    } catch (err) {
-        console.error(err);
-        req.flash('error', 'Registration failed');
-        res.redirect('/register');
+    } catch (error) {
+        console.error('Login Error:', error);
+        req.flash('error', 'An error occurred during login. Please try again.');
+        res.redirect('/user/login');
     }
 });
 
-// Login route
-router.get('/login', (req, res) => {
-    res.render('user/login');
+// Render register page
+router.get('/register', checkNotAuthenticated, (req, res) => {
+    res.render('user/register', { title: 'Register' });
 });
 
-router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
+// Handle register form submission
+router.post(
+    '/register',
+    checkNotAuthenticated,
+    [
+        body('username').notEmpty().withMessage('Username is required'),
+        body('email').isEmail().withMessage('A valid email is required'),
+        body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
+        body('confirmPassword').custom((value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error('Passwords do not match');
+            }
+            return true;
+        }),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
 
-        // Find user by email
-        const user = await User.findOne({ email });
-        if (!user) {
-            req.flash('error', 'Invalid email or password');
-            return res.redirect('/login');
+        if (!errors.isEmpty()) {
+            const errorMessages = errors.array().map(err => err.msg).join(', ');
+            req.flash('error', errorMessages);
+            return res.redirect('/user/register');
         }
 
-        // Compare entered password with stored hashed password
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            req.flash('error', 'Invalid email or password');
-            return res.redirect('/login');
+        const { username, email, password } = req.body;
+
+        try {
+            // Check if email or username already exists
+            const existingEmail = await User.findByEmail(email);
+            const existingUsername = await User.findByUsername(username);
+
+            if (existingEmail) {
+                req.flash('error', 'Email already exists');
+                return res.redirect('/user/register');
+            }
+            if (existingUsername) {
+                req.flash('error', 'Username already exists');
+                return res.redirect('/user/register');
+            }
+
+            // Hash the password and create a new user
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const newUser = await User.create({ username, email, password: hashedPassword });
+
+            // Automatically log in the user after successful registration
+            req.session.user = { id: newUser.id, username: newUser.username, email: newUser.email };
+            res.redirect('/user/profile');
+        } catch (error) {
+            console.error('Registration Error:', error);
+            req.flash('error', 'Error creating user. Please try again.');
+            res.redirect('/user/register');
         }
-
-        // Set user info in session
-        req.session.user = user;
-
-        req.flash('success', 'Logged in successfully');
-        res.redirect('/dashboard');  // Redirect to dashboard or home
-    } catch (err) {
-        console.error(err);
-        req.flash('error', 'Login failed');
-        res.redirect('/login');
     }
+);
+
+res.redirect('/');
+
+// Render user profile page
+router.get('/profile', checkAuthenticated, (req, res) => {
+    res.render('user/profile', { title: 'User Profile', user: req.session.user });
 });
 
-// Logout route
+// Logout
 router.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
+    req.session.destroy(err => {
         if (err) {
-            return res.redirect('/dashboard'); // Stay on dashboard if error occurs
+            console.error('Logout Error:', err);
+            return res.redirect('/user/profile');
         }
-        res.redirect('/login'); // Redirect to login page after logout
+        res.clearCookie('connect.sid');
+        res.redirect('/'); // Redirect to home after logout
     });
-});
-
-// Protect the dashboard route
-router.get('/dashboard', isAuthenticated, (req, res) => {
-    res.render('user/dashboard', { user: req.session.user });
 });
 
 module.exports = router;

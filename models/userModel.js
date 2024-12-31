@@ -1,28 +1,27 @@
-const db = require("../config/database");
+const db = require('../config/database'); // Import database configuration
 
-class User {
-    // Find a user by email
-    static async findOne({ email }) {
-        try {
-            const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
-            return rows.length ? rows[0] : null;
-        } catch (err) {
-            throw err;
-        }
+const User = {
+    create: async ({ username, email, password }) => {
+        const [result] = await db.execute(
+            'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+            [username, email, password]
+        );
+        return { id: result.insertId, username, email };
+    },
+    findByUsername: async (username) => {
+        const [rows] = await db.execute(
+            'SELECT * FROM users WHERE username = ?',
+            [username]
+        );
+        return rows[0];
+    },
+    findByEmail: async (email) => {
+        const [rows] = await db.execute(
+            'SELECT * FROM users WHERE email = ?',
+            [email]
+        );
+        return rows[0];
     }
-
-    // Create a new user
-    static async create({ username, email, password }) {
-        try {
-            const [result] = await db.execute(
-                'INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
-                [username, email, password]
-            );
-            return result.insertId; // Return the ID of the new user
-        } catch (err) {
-            throw err;
-        }
-    }
-}
+};
 
 module.exports = User;

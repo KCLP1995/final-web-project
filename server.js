@@ -28,6 +28,7 @@ app.use(flash());
 // Make flash messages available in all views (with res.locals)
 app.use((req, res, next) => {
     res.locals.messages = req.flash();
+    res.locals.user = req.session.user || null;  // Make user object available in all views
     next();
 });
 

@@ -1,12 +1,16 @@
 // middleware/auth.js
-
-function isAuthenticated(req, res, next) {
+function checkAuthenticated(req, res, next) {
     if (req.session.user) {
-        return next();  // If user is logged in, proceed to the next route
-    } else {
-        req.flash('error', 'You must be logged in to access this page');
-        res.redirect('/login');  // Redirect to login if user is not logged in
+        return next(); // If user is logged in, allow access
     }
+    res.redirect('/user/login'); // Redirect to login if not authenticated
 }
 
-module.exports = { isAuthenticated };
+function checkNotAuthenticated(req, res, next) {
+    if (req.session.user) {
+        return res.redirect('/user/dashboard'); // If logged in, redirect to dashboard
+    }
+    next(); // Otherwise, proceed to the next middleware
+}
+
+module.exports = { checkAuthenticated, checkNotAuthenticated };

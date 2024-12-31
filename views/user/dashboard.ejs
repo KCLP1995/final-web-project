@@ -1,8 +1,7 @@
 <%- include('../partials/header') %>
 
-<h1>Welcome, <%= user.username %></h1>
-<p>Email: <%= user.email %></p>
-
-<a href="/logout">Logout</a>
+<h1>Welcome, <%= user.name %></h1>
+<p>Your username: <%= user.username %></p>
+<a href="/user/logout">Logout</a>
 
 <%- include('../partials/footer') %>
