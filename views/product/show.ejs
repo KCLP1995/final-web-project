@@ -1,11 +1,20 @@
 <%- include('../partials/header') %>
-<h1 class="mb-4">Product Details</h1>
-<div class="card p-4">
-  <p><strong>ID:</strong> <%= product.id %></p>
-  <p><strong>Name:</strong> <%= product.name %></p>
-  <p><strong>Price:</strong> $<%= product.Price %></p>
-  <p><strong>Description:</strong> <%= product.description %></p>
+<h1 class="mb-4" style=" color:  gray;font-weight: bolder;margin-left: 200px;">Product Details</h1>
 
+<div class="diplay" style="display: flex;justify-content: center;">
+  <img src="<%= product.image %>"  alt="<%= product.name %>" style="width: 500px;height: 500px; object-fit: cover;scale: 1;">
+  <div class="card p-4" style="font-size: 24px;line-height: 2;width: 400px;height: 500px;">
+    <p><strong>ID:</strong> <%= product.id %></p>
+    <p><strong>Name:</strong> <%= product.name %></p>
+    <p><strong>Price:</strong>   $<%= product.price %></p>
+    <p><strong>Description:</strong> <%= product.description %></p>
+    <div class="icon" style="line-height: 1.5;color: whitesmoke;font-size: 18px;margin-top: 70px;">
+      <i class="fa-brands fa-square-instagram"></i>  KoKo cake shop<br>
+      <i class="fa-brands fa-facebook"></i>   KoKo cake shop<br>
+      <i class="fa-solid fa-envelope"></i>  KoKo_cake_shop@gmail.com<br>
+    </div>
+  </div>
 </div>
-<a href="/product" class="btn btn-secondary mt-3">Back to List</a>
+
+<a style="margin-left: 210px;margin-top: 200px;" href="/product" class="btn btn-secondary mt-3">Back to List</a>
 <%- include('../partials/footer') %>
