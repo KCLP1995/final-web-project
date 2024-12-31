@@ -1,15 +1,29 @@
 <%- include('../partials/header') %>
+ <!-- header page-->
+<div class="content">
+  <div class="text">
+    <h1 style=" color: palevioletred;">  THE TASTE OF YOUR CELEBRATION</h1>
+    <p> hello cake lover this is for all of you 
+     we will provide good service for you please click button to shop now</p>
+  </div>
+  <button type="button" class="btn btn-primary btn-sm">login</button>
+  <button type="button" class="btn btn-secondary btn-sm">shop now</button>
 
+</div>
+<img src="/uploads/background1.jpg" class="full-screen-img" alt="Responsive Full Screen Image" />
+
+<div class="header-1">
+  <h4 style="text-align: center;font-size: 30px; color: palevioletred;margin-top: 20px;border: 1px solid white;background-color:  rgb(228, 223, 223);border-radius: 10px;height: 50px;width: 210vh;">popular menu </h4>
+</div>
 <!-- Product Grid -->
-<div class="container my-5">
-  <h2 class="text-center mb-4">Our Products</h2>
+<div class="container my-5" style="margin-left: 100px;">
   <div class="row">
     <% products.forEach(product => { %>
       <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
-        <div class="card shadow-sm" style="height: 100%; border-radius: 10px;">
-          <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>" style="border-radius: 10px 10px 0 0; height: 200px; object-fit: cover;">
-          <div class="card-body">
-            <h5 class="card-title"><%= product.name %></h5>
+        <div class="card shadow-sm" style="height: 100%; border-radius: 10px;width: 210px;">
+          <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>" style="margin-left: 5px;border-radius: 10px 10px 0 0; height: 200px; object-fit: cover;">
+          <div class="card-body" style="text-align: center;line-height: 0.8;">
+            <h5 class="card-title"  style="color: hotpink;" ><%= product.name %></h5>
             <p class="card-text" style="color: #6c757d;"><%= product.description %></p>
             <a href="/product/<%= product.id %>" class="btn btn-primary btn-block">View Details</a>
           </div>
@@ -19,4 +33,46 @@
   </div>
 </div>
 
+<div style="background-color: rgb(162, 161, 161); color: white;width: 210vh;height: auto;" class="py-lg-3 mt-lg-2">
+  <section id="about us" class="py-3">
+      <div class="About">
+          <h3 style="text-align: center;color: palevioletred;;">About Us</h3>
+          <h5 class="ms-5" style="margin-top: 40px; line-height: 1.5;">Welcome to KoKo cake shop, where every cake is a masterpiece! We specialize in creating delicious, 
+          freshly baked cakes for all occasions, from birthdays to weddings and everything in between. Our skilled 
+          bakers use only the finest ingredients to craft cakes that not only look beautiful but taste incredible. 
+          At KoKo cake shop, we believe that every celebration deserves a slice of happiness, and we're here to 
+          make your moments even sweeter!🎁❤️❤️❤️</h5>
+      </div>
+      <div class="animal">
+        <img src="/uploads/pic4.jpg" alt="" width="400px" height="400px">
+    </div>
+  </section>
+</div>
+
+<div style=" background-color: rgb(162, 161, 161) ; color: white;width: 210vh;height: auto;" class="py-lg-3 mt-lg-2">
+    <div class="container" >
+        <div class="row ms-lg-5 mt-5">
+            <h4 class="col-4" style="color: palevioletred;">Contact us</h4>
+            <h4 class="col-4" style="color: palevioletred;">Contact site support</h4>
+        </div>
+        <div class="row ms-lg-5">
+            <h5 class="col-4 ">Facebook : KoKo cake shop</h5>
+            <h5 class="col-4">You are logged in as a stranger !!!</h5>
+            <h4 class="col-3 btn btn-outline-info text-center ms-5"><a style="text-decoration: none;color: aliceblue;" href="https://play.google.com/store/games?hl=en&pli=1">Google play</a></h4>
+        </div>
+        <div class="row ms-lg-5">
+            <h5 class="col-4">Website : KoKo cake shop</h5>
+            <h5 class="col-4">Would you like to sign up ???</h5>
+            <h4 class="col-3 btn btn-outline-info text-center ms-5"><a style="text-decoration: none;color: aliceblue;" href="https://www.apple.com/app-store/"  >App store</a></h4>
+        </div>
+        <div class="row ms-lg-5">
+            <h5 class="col-4">Email : KoKo_cake_shop@gmail.com</h5>
+            <h5 class="col-4">Reset user tour on this page</h5>
+        </div>
+        <div class="row ms-lg-5">
+          <i class="fa-solid fa-phone"></i> 012345678 / 012345678
+      </div>
+    </div>  
+</div>
 <%- include('../partials/footer') %>
+
