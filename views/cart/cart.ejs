@@ -1,0 +1,31 @@
+<!-- views/cart/cart.ejs -->
+<%- include('../partials/header') %>
+
+<h1><%= title %></h1>
+<% if (cart.length > 0) { %>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% cart.forEach(item => { %>
+                <tr>
+                    <td><%= item.name %></td>
+                    <td><%= item.quantity %></td>
+                    <td><%= item.price %></td>
+                    <td><%= item.quantity * item.price %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <a href="/cart/checkout">Proceed to Checkout</a>
+<% } else { %>
+    <p>Your cart is empty.</p>
+<% } %>
+
+<%- include('../partials/footer') %>

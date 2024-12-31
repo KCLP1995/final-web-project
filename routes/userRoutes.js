@@ -96,8 +96,6 @@ router.post(
     }
 );
 
-res.redirect('/');
-
 // Render user profile page
 router.get('/profile', checkAuthenticated, (req, res) => {
     res.render('user/profile', { title: 'User Profile', user: req.session.user });
