@@ -80,5 +80,18 @@
     }
     
 }
+.detail{
+    margin-left: 50px;
+}
+.detail h4{
+    color: palevioletred;
+}
+.detail p, li {
+    font-size: 20px;
+}
+.icon-button i {
+    padding: 10px;
+}
+
 
 
